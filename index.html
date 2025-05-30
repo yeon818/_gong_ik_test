@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>나의 공익활동 지수는?</title>
+  <style>
+    body { font-family: sans-serif; line-height: 1.6; padding: 20px; max-width: 800px; margin: auto; }
+    .question { margin: 20px 0; }
+    .option { padding: 10px; margin: 5px 0; cursor: pointer; border-radius: 5px; }
+    .q1 .option:nth-child(2) { background-color: #FFFACD; }
+    .q1 .option:nth-child(3) { background-color: #FFDAB9; }
+    .q1 .option:nth-child(4) { background-color: #E6E6FA; }
+    .q1 .option:nth-child(5) { background-color: #CCFFCC; }
+    .selected { border: 2px solid #000; }
+    #resultBtn { margin-top: 30px; padding: 10px 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h1>나의 공익활동 지수는?</h1>
+  <form id="quizForm">
+    <div id="quizContainer"></div>
+    <button type="submit" id="resultBtn">결과 보기</button>
+  </form>
+  <script>
+    const quizData = [
+      { q: "1. 거리에서 집회하는 시민들을 보았을 때 나는?", a: ["어떤 집회인지 확인 후 함께 참여한다", "관심을 갖고 지켜본다", "특별히 관심은 없다", "불편하게 느껴 피한다"] },
+      { q: "2. 어린이 보호구역에서 빠른 속도의 차량을 본 나는?", a: ["경찰이나 민원 앱에 제보한다", "주변 사람에게 알려 조심시키거나 주의를 준다", "위험하다고 느끼지만 지나간다", "그냥 지나친다"] },
+      { q: "3. 평소 공익 이슈를 접하는 나의 태도는?", a: ["뉴스, 칼럼, 소셜미디어로 꾸준히 본다", "내가 관심있는 이슈만 챙긴다", "누가 이야기 해주면 그 때 접한다", "따로 챙겨보지 않는다"] },
+      { q: "4. 지역 소식지를 받았을 때 나는?", a: ["주변에도 소식지를 공유한다", "관심 있는 내용만 저장한다", "가볍게 훑어본다", "그냥 두거나 버린다"] },
+      { q: "5. 마트에서 비닐봉투를 권유받았을 때 나는?", a: ["가방에 있던 에코백을 꺼낸다", "종이봉투가 있는지 물어본다", "다음에는 장바구니를 챙기자고 다짐한다", "별생각없이 비닐봉투를 받는다"] },
+      { q: "6. 재난 상황 속 지역 이웃을 돕는 나는?", a: ["지자체나 단체의 연대 활동에 직접 참여한다", "기부나 물품을 보내 돕는다", "주변에 도움을 줄 수 있는 방법을 찾아본다", "여유가 없어 참여가 어렵다"] },
+      { q: "7. 친구가 나눔 캠페인을 기획한다면 나는?", a: ["기획부터 홍보까지 함께하고 싶다", "기부나 물품 후원은 가능하다", "응원은 하지만 참여는 어렵다", "별로 관심이 없다"] },
+      { q: "8. 가짜뉴스나 혐오 표현이 도는 걸 봤을 때 나는?", a: ["바로 팩트체크 자료를 공유한다", "출처를 확인하고 주변에 알린다", "불편함을 느끼지만 행동하지 않는다", "그냥 넘긴다"] },
+      { q: "9. 친구가 인종차별적 발언을 했을 때 나는?", a: ["왜 문제인지 설명하며 짚는다", "조심스럽게 문제를 지적한다", "불편하지만 말하지 않는다", "상황을 넘긴다"] },
+      { q: "10. 친환경제품이 일반 제품보다 비싸면 나는?", a: ["조금 더 내고 친환경제품으로 구매한다", "자주 쓰는 건 친환경제품으로 구매한다", "고민하다가 일반제품을 구매한다", "가격이 웅선이라 일반제품을 구매한다"] },
+      { q: "11. 길에서 어려운 상황에 처한 노숙인을 봤을 때 나는?", a: ["경찰이나 행정복지센터에 연락한다", "도움받을 수 있는 기관 정보를 전달한다", "마음은 무겁지만 지나친다", "멀리서 피해 지나간다"] },
+      { q: "12. 내가 생각하는 공익활동이란?", a: ["나와 사회를 잇는 당연한 삶의 일부라고 생각한다", "누군가는 해야 할 중요한 일이라고 생각한다", "정확히는 모르지만 좋은 일이라 생각한다", "나와는 관련 없는 일이라 생각한다"] }
+    ];
+
+    const colors = ["#FFFACD", "#FFDAB9", "#E6E6FA", "#CCFFCC"];
+
+    const quizContainer = document.getElementById("quizContainer");
+    quizData.forEach((q, i) => {
+      const div = document.createElement("div");
+      div.className = "question q1";
+      div.innerHTML = `<p><strong>${q.q}</strong></p>` + q.a.map((opt, j) =>
+        `<div class="option" style="background-color:${colors[j]}" onclick="selectOption(${i}, ${j})" id="q${i}a${j}">${opt}</div>`
+      ).join("");
+      quizContainer.appendChild(div);
+    });
+
+    const answers = Array(quizData.length).fill(null);
+
+    function selectOption(qIdx, aIdx) {
+      for (let i = 0; i < 4; i++) {
+        document.getElementById(`q${qIdx}a${i}`).classList.remove("selected");
+      }
+      document.getElementById(`q${qIdx}a${aIdx}`).classList.add("selected");
+      answers[qIdx] = 4 - aIdx;
+    }
+
+    document.getElementById("quizForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      if (answers.includes(null)) {
+        alert("모든 문항에 응답해주세요!");
+        return;
+      }
+      const score = answers.reduce((a, b) => a + b, 0);
+      window.location.href = `result_${score}.html`;
+    });
+  </script>
+</body>
+</html>

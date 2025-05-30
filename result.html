@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>공익활동 지수 결과</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 30px; }
+    .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    h1 { text-align: center; margin-bottom: 20px; }
+    .result-text { font-size: 18px; line-height: 1.6; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>당신의 공익활동 지수는?</h1>
+    <div id="result" class="result-text"></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const score = parseInt(params.get("score"));
+
+    let resultText = "";
+
+    if (score >= 36) {
+      resultText = `<strong>공익 마스터형! 🧑‍🎓</strong><br>“공익은 나의 삶이자 철학이야!”...`;
+    } else if (score >= 28) {
+      resultText = `<strong>공익 서포터형! 🎺</strong><br>“나는 옆에서 힘을 실어주는 공익 응원단!”...`;
+    } else if (score >= 22) {
+      resultText = `<strong>공익 새싹형! 🍃</strong><br>“이게... 공익활동인가요?”...`;
+    } else {
+      resultText = `<strong>공익 씨앗형! 😅</strong><br>“공익? 나랑은 좀... 먼 이야기 같아!”...`;
+    }
+
+    document.getElementById("result").innerHTML = resultText;
+  </script>
+</body>
+</html>
